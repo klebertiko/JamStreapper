@@ -74,6 +74,37 @@ sudo python jamstreapper.py -i wlan0 -t 192.168.1.50 -g 192.168.1.1
 
 ---
 
+## 🎯 O QUE O JAMSTREAPPER DETECTA E BLOQUEIA
+
+### Protocolos P2P (Peer-to-Peer)
+
+O JamStreapper identifica e bloqueia tráfego de compartilhamento de arquivos através das seguintes assinaturas:
+
+| Protocolo | Assinaturas Detectadas |
+|-----------|------------------------|
+| **BitTorrent** | `BitTorrent protocol`, `get_peers`, `announce_peer`, `info_hash`, `peer_id` |
+| **eMule/eDonkey** | `eMule`, `eD2k` |
+| **DC++** | `DC++` |
+| **Gnutella** | `Gnutella`, `KAD`, `Kademlia` |
+
+### Serviços de Streaming
+
+O motor DPI analisa conexões HTTPS através do campo **SNI (Server Name Indication)** para identificar plataformas de streaming:
+
+**Plataformas Bloqueadas:**
+- 🎬 **Vídeo**: Netflix, YouTube, Prime Video, Hulu, Disney+, HBO Max, Crunchyroll, DAZN, Paramount+, Peacock, Pluto TV, Tubi, Vimeo, Dailymotion
+- 🎵 **Música**: Spotify, Apple Music
+- 🎮 **Gaming/Live**: Twitch
+- 📺 **Outros**: Stremio, Amazon Video
+
+### Como Funciona a Detecção
+
+1. **Camada de Aplicação (L7)**: Analisa o payload dos pacotes em busca de assinaturas binárias características de protocolos P2P
+2. **Inspeção TLS/SNI**: Intercepta o handshake TLS antes da criptografia completa para ler o nome do domínio solicitado
+3. **TCP RST Injection**: Ao detectar tráfego proibido, injeta pacotes TCP com flag RST em ambas as direções, forçando o encerramento da conexão
+
+---
+
 ## 🛡️ FUNCIONALIDADES DE ELITE
 
 - **`Ghost Cleanup`**: Protocolo de saída segura. Ao encerrar (`Ctrl+C`), o script executa o ARP Healing, enviando 7 pacotes de restauração para limpar o cache das vítimas e evitar instabilidades residuais na rede.
@@ -82,7 +113,7 @@ sudo python jamstreapper.py -i wlan0 -t 192.168.1.50 -g 192.168.1.1
 
 - **`Anti-Forensics`**: Rotinas de limpeza automática. O script desativa o encaminhamento de IP no kernel e tenta limpar o histórico de comandos da sessão para minimizar rastros de auditoria.
 
-- **`Selective Jamming`**: Diferente de um "Jammer" de RF, o JamStreapper permite que o alvo continue a usar serviços leves (e-mail, DNS, Web simples), enquanto bloqueia cirurgicamente o consumo abusivo de banda.
+- **`Selective Jamming`**: Diferente de um "Jammer" de RF, o JamStreapper permite que o alvo continue a usar serviços leves (e-mail, DNS, navegação web simples), enquanto bloqueia cirurgicamente o consumo abusivo de banda.
 
 ---
 
@@ -90,11 +121,38 @@ sudo python jamstreapper.py -i wlan0 -t 192.168.1.50 -g 192.168.1.1
 
 **P: Por que o alvo ainda consegue navegar no Google?**
 
-**R:** Porque o JamStreapper faz inspeção cirúrgica. Ele só bloqueia o que está na lista de assinaturas (`signatures list`). Isso torna o ataque muito mais difícil de ser notado.
+**R:** Porque o JamStreapper faz inspeção cirúrgica. Ele só bloqueia o que está na lista de assinaturas (`signatures list`). Isso torna o ataque muito mais difícil de ser notado e mantém serviços essenciais funcionando (navegação web, e-mail, DNS).
 
 **P: O script funciona em redes 5GHz?**
 
 **R:** Sim. O protocolo ARP opera na Camada 2, sendo independente da frequência ou modulação da Camada Física (Wi-Fi 2.4/5/6GHz).
+
+**P: Como adicionar mais assinaturas?**
+
+**R:** Edite o dicionário `self.signatures` no código:
+```python
+self.signatures = {
+    "P2P": [b"nova_assinatura", b"outra_assinatura"],
+    "STREAM": ["novodominio.com", "outroservico"]
+}
+```
+
+**P: O tráfego HTTPS não é criptografado?**
+
+**R:** Sim, mas o campo SNI (Server Name Indication) no handshake TLS é enviado em texto claro antes da criptografia completa, permitindo a identificação do domínio de destino.
+
+---
+
+## 🔧 MELHORIAS IMPLEMENTADAS NA v1.1
+
+- ✅ **Tratamento robusto de exceções** para evitar crashes durante operação
+- ✅ **Verificação de privilégios root** antes da execução
+- ✅ **Melhor parsing de TLS/SNI** com suporte a múltiplas extensões
+- ✅ **Injeção bidirecional de RST** para garantir terminação efetiva das conexões
+- ✅ **Logging aprimorado** com Rich para visualização profissional
+- ✅ **Assinaturas expandidas** - 14 P2P + 23 Streaming domains
+- ✅ **Timeout aumentado** para resolução ARP (3 segundos)
+- ✅ **Clear screen** no início para interface limpa
 
 ---
 
