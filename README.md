@@ -143,19 +143,6 @@ self.signatures = {
 
 ---
 
-## 🔧 MELHORIAS IMPLEMENTADAS NA v1.1
-
-- ✅ **Tratamento robusto de exceções** para evitar crashes durante operação
-- ✅ **Verificação de privilégios root** antes da execução
-- ✅ **Melhor parsing de TLS/SNI** com suporte a múltiplas extensões
-- ✅ **Injeção bidirecional de RST** para garantir terminação efetiva das conexões
-- ✅ **Logging aprimorado** com Rich para visualização profissional
-- ✅ **Assinaturas expandidas** - 14 P2P + 23 Streaming domains
-- ✅ **Timeout aumentado** para resolução ARP (3 segundos)
-- ✅ **Clear screen** no início para interface limpa
-
----
-
 ## 📜 LICENÇA
 
 Este projeto está sob a licença **MIT**.
