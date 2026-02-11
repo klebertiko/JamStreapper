@@ -47,9 +47,31 @@ O **JamStreapper v1.0** opera no "ponto cego" entre as camadas 2 e 7 do modelo O
 
 O script requer **Python 3** e privilégios administrativos para manipular sockets brutos (raw sockets).
 
+### Configuração do Ambiente Virtual (Recomendado)
+
+É altamente recomendável criar e ativar um ambiente virtual Python para isolar as dependências do JamStreapper de outros projetos.
+
 ```bash
-# Instalação das dependências necessárias
-pip install scapy rich art
+# Crie o ambiente virtual (se ainda não existir)
+python3 -m venv venv
+
+# Ative o ambiente virtual
+# No Linux/macOS:
+source venv/bin/activate
+# No Windows (Prompt de Comando):
+# venv\Scripts\activate.bat
+# No Windows (PowerShell):
+# venv\Scripts\Activate.ps1
+```
+
+Após ativar o ambiente, você verá `(venv)` no início do seu prompt de comando, indicando que você está trabalhando no ambiente isolado.
+
+### Instalação das Dependências
+
+Certifique-se de que o ambiente virtual esteja ativado antes de instalar as dependências.
+
+```bash
+pip install -r requirements.txt
 ```
 
 ### 2. Configuração do Cenário
